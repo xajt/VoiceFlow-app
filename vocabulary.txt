@@ -1,0 +1,53 @@
+# VoiceFlow Custom Vocabulary
+# Add your domain-specific terms that the model should recognize correctly
+# These words will be loaded into Handy's custom_words setting
+# Format: one word or phrase per line
+
+# Programming & Tech
+TypeScript
+React
+Tauri
+Next.js
+tailwindcss
+Vite
+cargo
+rustup
+Rust
+bun
+Node.js
+WebAssembly
+CUDA
+Vulkan
+DirectML
+ONNX
+whisper
+Parakeet
+transcription
+voice-to-text
+speech-to-text
+
+# AI / LLM
+GPT
+Claude
+Opus
+Ollama
+LLM
+RAG
+LangChain
+AGI
+
+# Polish tech terms
+programowanie
+transkrypcja
+aplikacja
+biblioteka
+frontend
+backend
+baza danych
+sztuczna inteligencja
+strumień
+endpoint
+hotkey
+skrót klawiszowy
+schowek
+nakładka
