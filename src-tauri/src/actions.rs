@@ -13,6 +13,7 @@ use crate::utils::{
 };
 use crate::TranscriptionCoordinator;
 use ferrous_opencc::{config::BuiltinConfig, OpenCC};
+use std::sync::atomic::{AtomicUsize, Ordering};
 use log::{debug, error, warn};
 use once_cell::sync::Lazy;
 use std::collections::HashMap;
@@ -584,6 +585,8 @@ impl ShortcutAction for TranscribeAction {
                                 let ah_clone = ah.clone();
                                 let paste_time = Instant::now();
                                 let final_text = processed.final_text;
+                                // Record length for undo
+                                record_pasted_text_len(final_text.chars().count());
                                 ah.run_on_main_thread(move || {
                                     match utils::paste(final_text, ah_clone.clone()) {
                                         Ok(()) => debug!(
@@ -671,6 +674,52 @@ impl ShortcutAction for TestAction {
     }
 }
 
+/// Global state for undo — stores char count of last pasted transcription
+static LAST_PASTED_LEN: AtomicUsize = AtomicUsize::new(0);
+
+/// Record the length of pasted text for undo purposes
+pub fn record_pasted_text_len(len: usize) {
+    LAST_PASTED_LEN.store(len, std::sync::atomic::Ordering::SeqCst);
+    debug!("Recorded pasted text length: {} chars", len);
+}
+
+// Undo Action — simulates backspace for last transcription
+struct UndoAction;
+
+impl ShortcutAction for UndoAction {
+    fn start(&self, app: &AppHandle, _binding_id: &str, _shortcut_str: &str) {
+        let len = LAST_PASTED_LEN.load(std::sync::atomic::Ordering::SeqCst);
+        if len == 0 {
+            debug!("Undo: nothing to undo");
+            return;
+        }
+
+        debug!("Undo: removing {} characters via backspace", len);
+        let ah = app.clone();
+        app.run_on_main_thread(move || {
+            use enigo::{Enigo, Key, Keyboard, Settings};
+
+            match Enigo::new(&Settings::default()) {
+                Ok(mut enigo) => {
+                    for _ in 0..len {
+                        if let Err(e) = enigo.key(Key::Backspace, enigo::Direction::Click) {
+                            error!("Undo backspace failed: {}", e);
+                            break;
+                        }
+                    }
+                    LAST_PASTED_LEN.store(0, std::sync::atomic::Ordering::SeqCst);
+                    debug!("Undo completed");
+                }
+                Err(e) => {
+                    error!("Failed to create Enigo instance for undo: {}", e);
+                }
+            }
+        }).unwrap_or_else(|e| error!("Failed to run undo on main thread: {:?}", e));
+    }
+
+    fn stop(&self, _app: &AppHandle, _binding_id: &str, _shortcut_str: &str) {}
+}
+
 // Static Action Map
 pub static ACTION_MAP: Lazy<HashMap<String, Arc<dyn ShortcutAction>>> = Lazy::new(|| {
     let mut map = HashMap::new();
@@ -691,6 +740,10 @@ pub static ACTION_MAP: Lazy<HashMap<String, Arc<dyn ShortcutAction>>> = Lazy::ne
     map.insert(
         "test".to_string(),
         Arc::new(TestAction) as Arc<dyn ShortcutAction>,
+    );
+    map.insert(
+        "undo".to_string(),
+        Arc::new(UndoAction) as Arc<dyn ShortcutAction>,
     );
     map
 });
