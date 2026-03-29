@@ -1,0 +1,58 @@
+[
+# VoiceFlow Custom Vocabulary
+# Add your domain-specific terms that the model should recognize correctly
+# One entry per line, either:
+#   - simple word: "TypeScript"
+#   - replacement: "tauri" -> "Tauri"
+#   - phrase: "voice to text" -> "voice-to-text"
+
+# Programming
+"TypeScript"
+"React"
+"Tauri"
+"Next.js"
+"tailwind"
+"Vite"
+"cargo"
+"rustup"
+"CLI"
+"API"
+"GPU"
+"CPU"
+"CUDA"
+"Vulkan"
+"DirectML"
+"ONNX"
+"whisper"
+"Parakeet"
+"transcription"
+"voice-to-text"
+"speech-to-text"
+"STT"
+"ASR"
+
+# AI / LLM
+"GPT"
+"Claude"
+"Opus"
+"Ollama"
+"LLM"
+"RAG"
+"LangChain"
+"AGI"
+
+# Polish tech terms
+"programowanie"
+"transkrypcja"
+"aplikacja"
+"biblioteka"
+"frontend"
+"backend"
+"baza danych"
+"sztuczna inteligencja"
+"strumień"
+"endpoint"
+"hotkey"
+"skrót klawiszowy"
+"schowek"
+"nakładka"
