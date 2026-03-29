@@ -331,7 +331,10 @@ pub(crate) async fn process_transcription_output(
     let mut post_processed_text: Option<String> = None;
     let mut post_process_prompt: Option<String> = None;
 
-    if let Some(converted_text) = maybe_convert_chinese_variant(&settings, transcription).await {
+    // VoiceFlow: local text processing (filler removal, capitalization)
+    final_text = crate::text_processing::process_text(&final_text);
+
+    if let Some(converted_text) = maybe_convert_chinese_variant(&settings, &final_text).await {
         final_text = converted_text;
     }
 

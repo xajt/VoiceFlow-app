@@ -13,6 +13,7 @@ mod managers;
 mod overlay;
 pub mod portable;
 mod settings;
+mod text_processing;
 mod shortcut;
 mod signal_handle;
 mod transcription_coordinator;
