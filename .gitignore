@@ -49,3 +49,6 @@ dev.bat
 build.bat
 build-check.bat
 run-dev.sh
+
+# Worktrees
+.worktrees/
