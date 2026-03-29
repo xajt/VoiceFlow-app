@@ -42,3 +42,10 @@ blob-report/
 
 # Nix build output
 result
+
+# Dev temp files
+VoiceFlow-dev.exe
+dev.bat
+build.bat
+build-check.bat
+run-dev.sh
